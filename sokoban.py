@@ -237,10 +237,10 @@ class Sokoban(object):
         visited = self.initial
         while not prev == visited:
             prev = visited
-            for rel, vars in self.movePartial:
-                visited |= visited.image(rel, vars)
+            visited |= visited.image(self.move, self.vars)
             stats.update(visited)
-            
+        return visited
+    
     def reachBFSPart(self):
         """
         Returns a BDD representing all reachable states,
@@ -248,7 +248,14 @@ class Sokoban(object):
         """
         stats = self.Stats();
         # TODO (Sokoban lab): Implement this algorithm.
-        raise NotImplementedError;
+        prev = self.bdd.false
+        visited = self.initial
+        while not prev == visited:
+            prev = visited
+            for rel, vars in self.movePartial:
+                visited |= prev.image(rel, vars)
+            stats.update(visited)
+        return visited
 
     def reachChaining(self):
         """
@@ -257,7 +264,14 @@ class Sokoban(object):
         """
         stats = self.Stats();
         # TODO (Sokoban lab): Implement this algorithm.
-        raise NotImplementedError;
+        prev = self.bdd.false
+        visited = self.initial
+        while not prev == visited:
+            prev = visited
+            for rel, vars in self.movePartial:
+                visited |= visited.image(rel, vars)
+            stats.update(visited)
+        return visited
 
     def reachSatLike(self):
         """
@@ -266,7 +280,17 @@ class Sokoban(object):
         """
         stats = self.Stats();
         # TODO (Sokoban lab): Implement this algorithm.
-        raise NotImplementedError;
+        prev = self.bdd.false
+        visited = self.initial
+        while not prev == visited:
+            prev = visited
+            for rel, vars in self.movePartial:
+                par_prev = self.bdd.false
+                while not par_prev == visited:
+                    par_prev = visited
+                    visited |= visited.image(rel, vars)
+            stats.update(visited)
+        return visited
 
     def reachSat(self):
         """
@@ -275,7 +299,18 @@ class Sokoban(object):
         """
         stats = self.Stats();
         # TODO (Sokoban lab): Implement this algorithm.
-        raise NotImplementedError;
+        relation = self.bdd.false
+        variables = bdd.BDDSet(relation)
+        visited = self.initial
+        for rel, vars in self.movePartial:
+            relation |= rel
+            variables = variables.union(vars)
+            par_prev = self.bdd.false
+            while not par_prev == visited:
+                par_prev = visited
+                visited |= visited.image(relation, variables)
+            stats.update(visited)
+        return visited
 
     reach = [
         reachBFS,

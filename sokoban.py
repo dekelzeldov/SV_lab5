@@ -122,6 +122,18 @@ class Sokoban(object):
         """
         TODO (Sokoban lab): Construct the BDD of the winning board.
         """
+        self.win_board = dd.true;
+        for r, c in itertools.product(range(R), range(C)):
+            if(lay[r][c]==Field.NONE):
+                continue;
+
+            # add to final board
+            v = dd.var(self.varMap[(r, c)]);
+            if(lay[r][c]!=Field.GOAL):
+                v = ~v;
+            self.win_board &= v;
+        
+        self.winning |= self.win_board
 
         # create move relation
         parts = [];
@@ -139,6 +151,11 @@ class Sokoban(object):
             """
             TODO (Sokoban lab): Construct the partial move relation.
             """
+            for step in [1,-1]:
+                pre  = src[1] & ~src[1+step] & ~src[1-step]
+                post = ~dst[1] & dst[1+step] & ~dst[1-step]
+                rel |= (pre & post)
+
 
             parts.append((rel, vars));
 
@@ -216,8 +233,14 @@ class Sokoban(object):
         """
         stats = self.Stats();
         # TODO (Sokoban lab): Implement this algorithm.
-        raise NotImplementedError;
-
+        prev = self.bdd.false
+        visited = self.initial
+        while not prev == visited:
+            prev = visited
+            for rel, vars in self.movePartial:
+                visited |= visited.image(rel, vars)
+            stats.update(visited)
+            
     def reachBFSPart(self):
         """
         Returns a BDD representing all reachable states,

@@ -233,9 +233,9 @@ class Sokoban(object):
         """
         stats = self.Stats();
         # TODO (Sokoban lab): Implement this algorithm.
-        prev = self.bdd.false
         visited = self.initial
-        while not prev == visited:
+        prev = self.bdd.false
+        while not (prev == visited):
             prev = visited
             visited |= visited.image(self.move, self.vars)
             stats.update(visited)
@@ -248,9 +248,9 @@ class Sokoban(object):
         """
         stats = self.Stats();
         # TODO (Sokoban lab): Implement this algorithm.
-        prev = self.bdd.false
         visited = self.initial
-        while not prev == visited:
+        prev = self.bdd.false
+        while not (prev == visited):
             prev = visited
             for rel, vars in self.movePartial:
                 visited |= prev.image(rel, vars)
@@ -264,9 +264,9 @@ class Sokoban(object):
         """
         stats = self.Stats();
         # TODO (Sokoban lab): Implement this algorithm.
-        prev = self.bdd.false
         visited = self.initial
-        while not prev == visited:
+        prev = self.bdd.false
+        while not (prev == visited):
             prev = visited
             for rel, vars in self.movePartial:
                 visited |= visited.image(rel, vars)
@@ -280,13 +280,13 @@ class Sokoban(object):
         """
         stats = self.Stats();
         # TODO (Sokoban lab): Implement this algorithm.
-        prev = self.bdd.false
         visited = self.initial
-        while not prev == visited:
+        prev = self.bdd.false
+        while not (prev == visited):
             prev = visited
             for rel, vars in self.movePartial:
                 par_prev = self.bdd.false
-                while not par_prev == visited:
+                while not (par_prev == visited):
                     par_prev = visited
                     visited |= visited.image(rel, vars)
             stats.update(visited)
@@ -299,16 +299,15 @@ class Sokoban(object):
         """
         stats = self.Stats();
         # TODO (Sokoban lab): Implement this algorithm.
-        relation = self.bdd.false
-        variables = bdd.BDDSet(relation)
         visited = self.initial
-        for rel, vars in self.movePartial:
-            relation |= rel
-            variables = variables.union(vars)
-            par_prev = self.bdd.false
-            while not par_prev == visited:
-                par_prev = visited
-                visited |= visited.image(relation, variables)
+        relations: list[tuple] = []
+        for r, v in self.movePartial:
+            relations = relations +[(r, v)]
+            prev = self.bdd.false
+            while not (prev == visited):
+                prev = visited
+                for rel, vars in relations:
+                    visited |= visited.image(rel, vars)
             stats.update(visited)
         return visited
 

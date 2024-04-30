@@ -151,11 +151,9 @@ class Sokoban(object):
             """
             TODO (Sokoban lab): Construct the partial move relation.
             """
-            for step in [1,-1]:
-                pre  = src[1] & ~src[1+step] & ~src[1-step]
-                post = ~dst[1] & dst[1+step] & ~dst[1-step]
-                rel |= (pre & post)
-
+            pre  =  src[1] & ~src[0] & ~src[2]
+            post = ~dst[1] & (dst[0] ^ dst[2])
+            rel |= (pre & post)
 
             parts.append((rel, vars));
 

@@ -252,7 +252,7 @@ class Sokoban(object):
             prev = visited
             for rel, vars in self.movePartial:
                 visited |= prev.image(rel, vars)
-            stats.update(visited)
+                stats.update(visited)
         return visited
 
     def reachChaining(self):
@@ -268,7 +268,7 @@ class Sokoban(object):
             prev = visited
             for rel, vars in self.movePartial:
                 visited |= visited.image(rel, vars)
-            stats.update(visited)
+                stats.update(visited)
         return visited
 
     def reachSatLike(self):
@@ -287,7 +287,7 @@ class Sokoban(object):
                 while not (par_prev == visited):
                     par_prev = visited
                     visited |= visited.image(rel, vars)
-            stats.update(visited)
+                    stats.update(visited)
         return visited
 
     def reachSat(self):
@@ -306,7 +306,7 @@ class Sokoban(object):
                 prev = visited
                 for rel, vars in relations:
                     visited |= visited.image(rel, vars)
-            stats.update(visited)
+                    stats.update(visited)
         return visited
 
     reach = [
